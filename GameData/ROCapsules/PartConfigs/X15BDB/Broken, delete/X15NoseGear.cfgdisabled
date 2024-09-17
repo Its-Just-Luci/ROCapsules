@@ -1,0 +1,304 @@
+PART
+{
+
+	name = ROC-X15NoseGearBDB
+	module = Part
+	author = Cobaltwolf,Luci
+
+	RSSROConfig = True
+	
+	MODEL
+	{
+		model = ROCapsules/Assets/BDB/X15/bluedog_X15_NoseGear
+	}
+
+	scale = 1.718
+	rescaleFactor = 1.0
+	// --- node definitions ---
+	node_stack_top = 0.0, 0.97866, 1.075, 0.0, 0.0, 1.0, 0
+	node_stack_bottom = 0.0, 0.97866, -0.33141, 0.0, 0.0, -1.0, 1
+	attachRules = 1,0,1,1,0
+
+	CoPOffset = 0.0, 0.0, 0.0
+	CoLOffset = 0.0, 0.0, 0.0
+	CoMOffset = 0, -0.28, 0
+	CenterOfBuoyancy = 0.0, 0.0, -0.3
+	CenterOfDisplacement = 0.0, -0.35, 0.0
+	buoyancy = 1.75
+	buoyancyUseSine = False
+
+	TechRequired = unlockParts
+	entryCost = 0
+	cost = 2000
+	category = Ground
+	subcategory = 0
+	title = X-15 Nose Gear
+	manufacturer = North American Aviation
+	description = FIXME
+	mass = 1.37586	//1412.01 kg - 26 kg (Batteries) - 18 kg (Antenna) - 3 kg (Habitat Atmosphere) - 20 kg (Other?) + 15.42 kg (Life Support Resources. LiOH included in inert mass)
+	//1427.43 incl. LS mass compensation
+	dragModelType = default
+	maximum_drag = 0.1
+	minimum_drag = 0.1
+	angularDrag = 0.75
+	breakingForce = 72
+	breakingTorque = 72
+	crashTolerance = 20
+	vesselType = Ship
+	CrewCapacity = 0
+	bulkheadProfiles = size0, size1p2
+	maxTemp = 600
+
+	skinMassPerArea = 13.15				//Beryllium 1.85 ton/m^3. 7.11 mm Beryllium, 13.15 kg/m^2? UNKNOWN, FIXME
+	 
+	skinTempTag = Inconel
+	internalTempTag = Instruments
+	skinInsulationTag = True
+
+	tags = X-15 Cockpit
+
+	INTERNAL
+	{
+		name = mk1CockpitInternal
+	}
+
+	MODULE
+	{
+		name = ModuleWheelBase
+		
+		wheelColliderTransformName = Wheel_Collider		
+		wheelTransformName = WheelPivot
+		useNewFrictionModel = true
+		wheelType = FREE
+
+		// setting this to true will override the radius and center parameters
+		FitWheelColliderToMesh = False		
+		radius = 0.18
+		center = 0.0, 0.0, 0.0
+		mass = 0.080
+		groundHeightOffset = 0.0
+				
+		TooltipTitle = #autoLOC_502079 //#autoLOC_502079 = Retractable Landing Gear
+		TooltipPrimaryField = #autoLOC_6004046 //#autoLOC_6004046 = Retractable
+	}
+	MODULE
+	{
+		name = ModuleWheelSuspension
+		baseModuleIndex = 0
+		suspensionTransformName = SuspensionPivot
+		maximumLoad = 10
+		suspensionDistance = 0.2
+		suspensionOffset = -0.2286
+		targetPosition = 1	// 0-1 scalar - determines the 'at rest' position of the wheel along the suspension travel	
+		springRatio = 30
+		damperRatio = 1
+		// boostRatio = 0.65
+		useDistributedMass = true
+	}	
+	MODULE
+	{
+		name = ModuleWheelSteering
+		baseModuleIndex = 0
+		
+		caliperTransformName = SteeringPivot
+		
+		steeringResponse = 2
+		steeringCurve
+		{
+			key = 0 30
+			key = 25 20
+			key = 100 15
+		}
+		steeringMaxAngleCurve
+		{
+			key = 0 1 0 0
+			key = 3 1 0.0001624425 0.0001624425
+			key = 7.5 0.33 -0.05674612 -0.05674612
+			key = 20 0.12 -0.003959382 -0.003959382
+			key = 30 0.1 -0.001822412 -0.001822412
+			key = 100 0.01 -0.0007683467 -0.0007683467
+		}
+	}
+	MODULE
+	{
+		name = ModuleWheelBrakes
+		baseModuleIndex = 0
+		maxBrakeTorque = 8
+		brakeResponse = 1
+	}
+	MODULE
+	{
+		name = ModuleWheelDeployment
+		baseModuleIndex = 0
+		
+		animationTrfName = Wheel
+		animationStateName = deploy
+		deployedPosition = 0
+		deployTargetTransformName = deployTgt
+		
+		TsubSys = 1.0
+		useStandInCollider = True
+		slaveModules = 4
+		
+		fxDeploy = deploy
+		fxRetract = retract
+		fxDeployed = deployed
+		fxRetracted = retracted
+	}
+	EFFECTS
+	{
+		rcsAtt
+		{
+			AUDIO_MULTI
+			{
+				channel = Ship
+				transformName = rcsTransform
+				clip = sound_rocket_mini
+				volume = 0.0 0.0
+				volume = 0.02 0.1
+				volume = 0.5 0.1
+				volume = 1.0 0.1
+				pitch = 0.0 0.75
+				pitch = 1.0 1.5
+				loop = true
+			}
+			MODEL_MULTI_PARTICLE
+			{
+				name = sharp
+				modelName = Bluedog_DB/FX/PlumeParty/RCS/soyuzShock_0p2
+				transformName = rcsTransform
+				emission = 0.0 0.0
+				emission = 0.1 0.3
+				emission = 1.0 1.0
+				speed = 0.0 0.8
+				speed = 1.0 1.0
+				localRotation = -90, 0, 0
+			}
+			MODEL_MULTI_PARTICLE
+			{
+				name = soft
+				modelName = Bluedog_DB/FX/PlumeParty/RCS/soyuzWide_0p2
+				transformName = rcsTransform
+				emission = 0.0 0.0
+				emission = 0.1 0.3
+				emission = 1.0 1.0
+				speed = 0.0 0.8
+				speed = 1.0 1.0
+				localRotation = -90, 0, 0
+			}
+		}
+		deploy
+		{
+			AUDIO
+			{
+				channel = Ship
+				clip = Squad/Sounds/elev_start
+				volume = 0 0
+				volume = 1 0.6
+				pitch = 0.75
+			}
+			AUDIO_LOOP
+			{
+				channel = Ship
+				clip = Squad/Sounds/elev_loop
+				volume = 0 0
+				volume = 1 0.6
+				pitch = 0.60
+			}
+		}
+		deployed
+		{
+			AUDIO
+			{
+				channel = Ship
+				clip = Squad/Sounds/elev_stop
+				volume = 0 0
+				volume = 1 0.6
+				pitch = 0.55
+			}
+		}
+		retract
+		{
+			AUDIO
+			{
+				channel = Ship
+				clip = Squad/Sounds/elev_stop
+				volume = 0 0
+				volume = 1 0.6
+				pitch = 0.75
+			}
+			AUDIO_LOOP
+			{
+				channel = Ship
+				clip = Squad/Sounds/elev_loop
+				volume = 0 0
+				volume = 1 0.6
+				pitch = 0.55
+			}
+		}
+		retracted
+		{
+			AUDIO
+			{
+				channel = Ship
+				clip = Squad/Sounds/elev_start
+				volume = 0 0
+				volume = 1 0.6
+				pitch = 0.75
+			}
+		}
+	}
+
+	MODULE
+	{
+		name = ModuleRCSFX
+		stagingEnabled = False
+		thrusterTransformName = rcsTransform
+		thrusterPower = 0.3 
+		resourceName = MonoPropellant
+		resourceFlowMode = STACK_PRIORITY_SEARCH
+		runningEffectName = rcsAtt
+		rcsEnabled = True
+		enableX = false
+		enableY = false
+		enableZ = false
+		enableRoll = false
+		enablePitch = true
+		enableYaw = true
+		
+		PlumeName = Skip
+		PlumeScale = 1,1,1
+		
+		atmosphereCurve
+		{
+			key = 0 283
+			key = 1 100
+			key = 4 0.001
+		}
+	}
+	MODULE
+	{
+		name = ModuleDragModifier
+		dragCubeName = Deployed
+		dragModifier = 3
+	}
+	
+	MODULE
+	{
+		name = ModuleB9PartSwitch
+		moduleID = textureSwitchPaintNose
+		uiGroupName = paint
+		uiGroupDisplayName = Paint Switch
+		switcherDescription = Coating
+		switcherDescriptionPlural = Coatings
+		affectDragCubes = False
+		affectFARVoxels = False
+		SUBTYPE
+		{
+			name = Blue Inconel
+			primaryColor = #35383e
+			transform = fixedPitot
+		}
+	}
+	
+}
